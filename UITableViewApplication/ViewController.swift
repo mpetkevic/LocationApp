@@ -10,46 +10,52 @@ import UIKit
 import CoreLocation
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
-   
+    
     let manager = CLLocationManager()
     
-    var myLocationLatitude = [Double]()
-    var mylocationLongitude = [Double]()
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let location = locations [0]
-        myLocationLatitude = [location.coordinate.latitude]
-        mylocationLongitude = [location.coordinate.longitude]
-        
-    }
-    
-
-    @IBAction func buttonTapped(_ sender: UIButton) {
-        let ac = UIAlertController(title: "Hello, your location:", message: "Latitude: \(myLocationLatitude) , Longtitude: \(mylocationLongitude)", preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-        ac.addAction(alertAction)
-        present(ac, animated: true, completion: nil)
-        
-    
-    }
-    
+    var myLocationLatitude: Double?
+    var mylocationLongitude: Double?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        run()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    func run() {
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
         manager.requestAlwaysAuthorization()
         manager.startUpdatingLocation()
-       
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
+    @IBAction func buttonTapped(_ sender: UIButton) {
+        //unwrapping needed
+        let ac = UIAlertController(title: "Hello, your location:", message: "Latitude: \(myLocationLatitude!) , Longtitude: \(mylocationLongitude!)", preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+        ac.addAction(alertAction)
+        present(ac, animated: true, completion: nil)
+    }
     
-
-
+    //MARK: CLLocationManagerDelegate methods
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = locations[0]
+        myLocationLatitude = location.coordinate.latitude
+        mylocationLongitude = location.coordinate.longitude
+        print("The location: \(location)")
+        manager.stopUpdatingLocation()
+        
+    }
 }
-
